@@ -3,6 +3,8 @@ import mongoose from "mongoose";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
+import path from "path";
+import { fileURLToPath } from "url";
 
 // Initialize environment variables immediately
 dotenv.config();
@@ -16,9 +18,11 @@ import couponRoutes from "./routes/coupons.ts";
 import userRoutes from "./routes/user.ts";
 import orderRoutes from "./routes/orders.ts";
 import adminUserRoutes from "./routes/adminUsers.ts";
+import uploadRoutes from "./routes/upload.ts";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/andra-amruth";
 
 // Middleware
@@ -58,6 +62,12 @@ app.use(cors({
 app.use(express.json({ limit: "10mb" })); // Increased limit for potential base64 image uploads
 app.use(cookieParser());
 
+// Serve public assets statically (product images, etc.)
+app.use(express.static(path.join(__dirname, "public")));
+
+// Serve uploaded images statically
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
 // Database Connection
 mongoose
   .connect(MONGODB_URI)
@@ -77,6 +87,7 @@ app.use("/api/coupons", couponRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/admin/users", adminUserRoutes);
+app.use("/api/upload", uploadRoutes);
 
 // Health Check
 app.get("/health", (req, res) => {

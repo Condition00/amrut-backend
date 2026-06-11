@@ -1,12 +1,14 @@
 import { Router, type Request, type Response } from "express";
 import path from "path";
 import fs from "fs";
+import { fileURLToPath } from "url";
 import { authMiddleware, type AuthRequest } from "../middleware/authMiddleware.ts";
 
 const router = Router();
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // Ensure uploads directory exists
-const UPLOADS_DIR = path.join(process.cwd(), "uploads");
+const UPLOADS_DIR = path.join(__dirname, "..", "uploads");
 if (!fs.existsSync(UPLOADS_DIR)) {
   fs.mkdirSync(UPLOADS_DIR, { recursive: true });
 }

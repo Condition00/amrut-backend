@@ -3,18 +3,13 @@
   "module": "index.ts",
   "type": "module",
   "private": true,
-  "scripts": {
-    "dev": "bun --watch index.ts",
-    "start": "bun run dist/index.js",
-    "seed": "bun run seed.ts",
-    "build": "bun build index.ts --outdir dist"
-  },
   "devDependencies": {
     "@types/bun": "latest",
     "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
-    "@types/jsonwebtoken": "^9.0.10"
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/multer": "^2.1.0"
   },
   "peerDependencies": {
     "typescript": "^5"
@@ -27,6 +22,7 @@
     "google-auth-library": "^10.7.0",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.7.0",
+    "multer": "^2.1.1",
     "razorpay": "^2.9.6"
   }
 }
