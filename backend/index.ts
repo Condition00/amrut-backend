@@ -62,6 +62,9 @@ app.use(cors({
 app.use(express.json({ limit: "10mb" })); // Increased limit for potential base64 image uploads
 app.use(cookieParser());
 
+// Serve public assets statically (product images, etc.)
+app.use(express.static(path.join(__dirname, "public")));
+
 // Serve uploaded images statically
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 

@@ -20,7 +20,7 @@ const seedProductsData = [
     name: "Avakaya",
     tagline: "The queen of Andhra pickles",
     description: "Authentic Andhra mango pickle, sun-soaked in cold-pressed sesame oil with mustard, fenugreek and Guntur chilies.",
-    image: "/src/assets/product-avakaya.jpg",
+    image: "/product-avakaya.jpg",
     category: "Veg" as const,
     sizes: vegSizes,
     featured: true,
@@ -31,7 +31,7 @@ const seedProductsData = [
     name: "Maagaya (Dry Mango)",
     tagline: "Sun-cured raw mango pickle",
     description: "Dry-style mango pickle made with sun-cured raw mango, salt and chili — long-keeping and intensely tangy.",
-    image: "/src/assets/product-maagaya.jpg",
+    image: "/product-maagaya.jpg",
     category: "Veg" as const,
     sizes: vegSizes,
     featured: false,
@@ -42,7 +42,7 @@ const seedProductsData = [
     name: "Pottu Pachadi (Mango Thokku)",
     tagline: "Rich, spicy and tangy",
     description: "A robust Andhra thokku built on grated raw mango, fiery red chili and pure sesame oil.",
-    image: "/src/assets/product-pachadi.jpg",
+    image: "/product-pachadi.jpg",
     category: "Veg" as const,
     sizes: vegSizes,
     featured: false,
@@ -53,7 +53,7 @@ const seedProductsData = [
     name: "Tomato Pickle",
     tagline: "Tangy, spicy & full of flavour",
     description: "Vine-ripened tomatoes slow-cooked with tamarind, jaggery and a smoky tempering.",
-    image: "/src/assets/product-tomato.jpg",
+    image: "/product-tomato.jpg",
     category: "Veg" as const,
     sizes: vegSizes,
     featured: false,
@@ -64,7 +64,7 @@ const seedProductsData = [
     name: "Allam (Ginger Pickle)",
     tagline: "Strong, warm, deeply aromatic",
     description: "Fresh ginger pickled with tamarind and chili — a punchy companion for dosas and curd rice.",
-    image: "/src/assets/product-ginger.jpg",
+    image: "/product-ginger.jpg",
     category: "Veg" as const,
     sizes: vegSizes,
     featured: false,
@@ -75,7 +75,7 @@ const seedProductsData = [
     name: "Gongura Pickle",
     tagline: "A traditional Andhra favourite",
     description: "Tart sorrel leaves slow-cooked with garlic and chili — the soul of every Telugu home.",
-    image: "/src/assets/product-gongura.jpg",
+    image: "/product-gongura.jpg",
     category: "Veg" as const,
     sizes: vegSizes,
     featured: true,
@@ -86,7 +86,7 @@ const seedProductsData = [
     name: "Pachimirchi (Green Chilli)",
     tagline: "Bright, fresh, fiery",
     description: "Tender green chilies pickled with mustard and lemon — crisp and bright on the tongue.",
-    image: "/src/assets/product-green-chilli.jpg",
+    image: "/product-green-chilli.jpg",
     category: "Veg" as const,
     sizes: vegSizes,
     featured: false,
@@ -97,7 +97,7 @@ const seedProductsData = [
     name: "Pandu Mirchi (Red Chilli)",
     tagline: "Whole red chili pickle",
     description: "Ripe red chilies preserved whole in spiced sesame oil — bold heat with deep flavour.",
-    image: "/src/assets/product-pandu-mirchi.jpg",
+    image: "/product-pandu-mirchi.jpg",
     category: "Veg" as const,
     sizes: vegSizes,
     featured: false,
@@ -108,7 +108,7 @@ const seedProductsData = [
     name: "Nimmakaya (Lemon)",
     tagline: "Hand-picked lemons, slow-matured",
     description: "Bright, citrusy lemon pickle made the way our grandmothers did — aged for depth.",
-    image: "/src/assets/product-lemon.jpg",
+    image: "/product-lemon.jpg",
     category: "Veg" as const,
     sizes: vegSizes,
     featured: false,
@@ -119,7 +119,7 @@ const seedProductsData = [
     name: "Dhabbakaya",
     tagline: "An Andhra heirloom",
     description: "Wood-apple pickle with a deep, smoky sweetness balanced by salt and chili.",
-    image: "/src/assets/product-dhabbakaya.jpg",
+    image: "/product-dhabbakaya.jpg",
     category: "Veg" as const,
     sizes: vegSizes,
     featured: false,
@@ -130,7 +130,7 @@ const seedProductsData = [
     name: "Oosirikaya (Amla)",
     tagline: "Nutrient-rich gooseberry",
     description: "Indian gooseberry pickled with mustard and fenugreek — sour, salty and full of vitamin C.",
-    image: "/src/assets/product-amla.jpg",
+    image: "/product-amla.jpg",
     category: "Veg" as const,
     sizes: vegSizes,
     featured: false,
@@ -141,7 +141,7 @@ const seedProductsData = [
     name: "Mix Vegetable Pickle",
     tagline: "A medley of garden vegetables",
     description: "Carrot, lemon, ginger, chili and more — pickled together for a colourful, flavour-packed jar.",
-    image: "/src/assets/product-mix-veg.jpg",
+    image: "/product-mix-veg.jpg",
     category: "Veg" as const,
     sizes: vegSizes,
     featured: false,
@@ -152,7 +152,7 @@ const seedProductsData = [
     name: "Chicken Pickle (Bone)",
     tagline: "Country chicken, slow-cooked",
     description: "Bone-in country chicken preserved in sesame oil with whole spices — a meal in itself.",
-    image: "/src/assets/product-chicken.jpg",
+    image: "/product-chicken.jpg",
     category: "Non-Veg" as const,
     sizes: [
       { weight: "250 g", price: 350 },
@@ -167,7 +167,7 @@ const seedProductsData = [
     name: "Chicken Boneless Pickle",
     tagline: "Premium boneless chicken",
     description: "Tender boneless chicken cubes folded into red chili and aromatic spices.",
-    image: "/src/assets/product-chicken-boneless.jpg",
+    image: "/product-chicken-boneless.jpg",
     category: "Non-Veg" as const,
     sizes: [
       { weight: "250 g", price: 490 },
@@ -182,7 +182,7 @@ const seedProductsData = [
     name: "Gongura Chicken (Bone)",
     tagline: "Chicken in tart sorrel",
     description: "Bone-in chicken slow-cooked with gongura and hand-pounded masalas — a regional classic.",
-    image: "/src/assets/product-chicken.jpg",
+    image: "/product-chicken.jpg",
     category: "Non-Veg" as const,
     sizes: [
       { weight: "250 g", price: 390 },
@@ -197,7 +197,7 @@ const seedProductsData = [
     name: "Prawns Pickle",
     tagline: "Coastal Andhra, bottled",
     description: "Plump prawns layered with garlic, fiery red chili and pure sesame oil.",
-    image: "/src/assets/product-prawns.jpg",
+    image: "/product-prawns.jpg",
     category: "Non-Veg" as const,
     sizes: [
       { weight: "250 g", price: 430 },
@@ -212,7 +212,7 @@ const seedProductsData = [
     name: "Gongura Prawns Pickle",
     tagline: "Prawns meet sorrel",
     description: "Prawns folded into tart gongura with garlic and chili — coastal Andhra at its finest.",
-    image: "/src/assets/product-prawns.jpg",
+    image: "/product-prawns.jpg",
     category: "Non-Veg" as const,
     sizes: [
       { weight: "250 g", price: 460 },
@@ -227,7 +227,7 @@ const seedProductsData = [
     name: "Dried Mango Pieces",
     tagline: "Sun-dried, ready for cooking",
     description: "Salt-cured raw mango pieces, sun-dried slowly — perfect for dals and rasams.",
-    image: "/src/assets/product-dried-mango.jpg",
+    image: "/product-dried-mango.jpg",
     category: "Sun Dries" as const,
     sizes: [
       { weight: "250 g", price: 190 },
@@ -241,7 +241,7 @@ const seedProductsData = [
     name: "Pindi Vadiyalu",
     tagline: "Crisp lentil dumplings",
     description: "Hand-shaped lentil dumplings, sun-dried for that signature crunch when fried.",
-    image: "/src/assets/product-vadiyalu.jpg",
+    image: "/product-vadiyalu.jpg",
     category: "Sun Dries" as const,
     sizes: [
       { weight: "250 g", price: 190 },
@@ -255,7 +255,7 @@ const seedProductsData = [
     name: "Challa Mirapakayalu",
     tagline: "Buttermilk-soaked chilies",
     description: "Green chilies soaked in spiced buttermilk and sun-dried — crisp, salty, smoky.",
-    image: "/src/assets/product-challa-mirchi.jpg",
+    image: "/product-challa-mirchi.jpg",
     category: "Sun Dries" as const,
     sizes: [
       { weight: "100 g", price: 250 },
@@ -269,7 +269,7 @@ const seedProductsData = [
     name: "Idly Karam Podi",
     tagline: "The classic gunpowder",
     description: "Roasted lentils and chilies ground to a fragrant powder — pairs with sesame oil over hot idly.",
-    image: "/src/assets/product-idly-podi.jpg",
+    image: "/product-idly-podi.jpg",
     category: "Powders" as const,
     sizes: powderSizes,
     featured: false,
@@ -280,7 +280,7 @@ const seedProductsData = [
     name: "Karvepaku Podi",
     tagline: "Curry leaf powder",
     description: "Fresh curry leaves dry-roasted with dal and chili — earthy, aromatic, deeply South Indian.",
-    image: "/src/assets/product-karvepaku-podi.jpg",
+    image: "/product-karvepaku-podi.jpg",
     category: "Powders" as const,
     sizes: powderSizes,
     featured: false,
@@ -291,7 +291,7 @@ const seedProductsData = [
     name: "Kandhi Podi",
     tagline: "Toor dal spice mix",
     description: "Roasted toor dal blended with chili and garlic — sprinkle on rice with ghee.",
-    image: "/src/assets/product-kandhi-podi.jpg",
+    image: "/product-kandhi-podi.jpg",
     category: "Powders" as const,
     sizes: powderSizes,
     featured: false,
@@ -302,7 +302,7 @@ const seedProductsData = [
     name: "Dhaniyala Karam Podi",
     tagline: "Coriander chili powder",
     description: "Coriander seeds and dry chilies stone-ground into a warm, fragrant everyday powder.",
-    image: "/src/assets/product-dhaniyala-podi.jpg",
+    image: "/product-dhaniyala-podi.jpg",
     category: "Powders" as const,
     sizes: powderSizes,
     featured: false,
@@ -313,7 +313,7 @@ const seedProductsData = [
     name: "Chilli Powder — Curry",
     tagline: "Stone-ground for daily cooking",
     description: "Sun-dried Guntur chilies stone-ground for a balanced, everyday curry powder.",
-    image: "/src/assets/product-chilli-powder.jpg",
+    image: "/product-chilli-powder.jpg",
     category: "Spices" as const,
     sizes: [
       { weight: "250 g", price: 180 },
@@ -328,7 +328,7 @@ const seedProductsData = [
     name: "Chilli Powder — Pickle",
     tagline: "Coarse pickle-grade chili",
     description: "Coarse-ground premium chili, made for pickling — vivid red, deep heat.",
-    image: "/src/assets/product-chilli-powder.jpg",
+    image: "/product-chilli-powder.jpg",
     category: "Spices" as const,
     sizes: [
       { weight: "250 g", price: 260 },
@@ -353,6 +353,28 @@ export async function seedDatabase() {
       await Product.insertMany(seedProductsData);
       console.log(`Seeded ${seedProductsData.length} default products.`);
     }
+
+    // Update any products that still reference the old /src/assets/ paths
+    const productsToUpdate = await Product.find({ image: /^\/src\/assets\// });
+    if (productsToUpdate.length > 0) {
+      for (const p of productsToUpdate) {
+        p.image = p.image.replace("/src/assets/", "/");
+        await p.save();
+      }
+      console.log(`Updated ${productsToUpdate.length} product image paths from /src/assets/ to root.`);
+    }
+
+    // Update any uploaded products that reference localhost:3000
+    const localhostUploads = await Product.find({ image: /^http:\/\/localhost:3000\/uploads\// });
+    if (localhostUploads.length > 0) {
+      const backendUrl = process.env.BACKEND_URL || "https://api.andhramruth.com";
+      for (const p of localhostUploads) {
+        p.image = p.image.replace("http://localhost:3000", backendUrl);
+        await p.save();
+      }
+      console.log(`Updated ${localhostUploads.length} localhost product image URLs to ${backendUrl}.`);
+    }
+
 
     const couponCount = await Coupon.countDocuments();
     if (couponCount === 0) {
