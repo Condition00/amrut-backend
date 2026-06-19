@@ -14,7 +14,7 @@ const powderSizes = [
   { weight: "500 g", price: 290 },
 ];
 
-const seedProductsData = [
+const seedProductsDataRaw = [
   {
     slug: "avakaya",
     name: "Avakaya",
@@ -340,6 +340,11 @@ const seedProductsData = [
   },
 ];
 
+const seedProductsData = seedProductsDataRaw.map(({ image, ...product }) => ({
+  ...product,
+  image: "",
+}));
+
 const seedCouponsData = [
   { code: "WELCOME50", discountType: "fixed" as const, discountValue: 50, minCartValue: 200, isActive: true },
   { code: "AMRUTH10", discountType: "percentage" as const, discountValue: 10, minCartValue: 500, isActive: true },
@@ -364,10 +369,19 @@ export async function seedDatabase() {
       console.log(`Updated ${productsToUpdate.length} product image paths from /src/assets/ to root.`);
     }
 
-    // Update any uploaded products that reference localhost:3000
+    const fallbackProductImages = await Product.find({ image: /^\/product-/ });
+    if (fallbackProductImages.length > 0) {
+      for (const p of fallbackProductImages) {
+        p.image = "";
+        await p.save();
+      }
+      console.log(`Cleared ${fallbackProductImages.length} legacy fallback product images.`);
+    }
+
+    // Update any uploaded products that reference a stale localhost backend URL.
+    const backendUrl = process.env.BACKEND_URL?.trim().replace(/\/$/, "") || `http://localhost:${process.env.PORT || 3000}`;
     const localhostUploads = await Product.find({ image: /^http:\/\/localhost:3000\/uploads\// });
-    if (localhostUploads.length > 0) {
-      const backendUrl = process.env.BACKEND_URL || "https://api.andhramruth.com";
+    if (localhostUploads.length > 0 && backendUrl) {
       for (const p of localhostUploads) {
         p.image = p.image.replace("http://localhost:3000", backendUrl);
         await p.save();

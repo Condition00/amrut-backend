@@ -28,7 +28,7 @@ const ProductSchema = new Schema<IProduct>({
   name: { type: String, required: true },
   tagline: { type: String, default: "" },
   description: { type: String, default: "" },
-  image: { type: String, required: true },
+  image: { type: String, default: "" },
   category: {
     type: String,
     enum: ["Veg", "Non-Veg", "Sun Dries", "Powders", "Spices"],

@@ -24,6 +24,12 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/andra-amruth";
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  ...(process.env.CORS_ORIGINS || "").split(","),
+]
+  .map((origin) => origin?.trim().replace(/\/$/, ""))
+  .filter((origin): origin is string => Boolean(origin));
 
 // Middleware
 app.use(cors({
@@ -31,26 +37,15 @@ app.use(cors({
     // Allow requests with no origin (e.g. mobile apps, curl, Postman)
     if (!origin) return callback(null, true);
 
-    const allowedOrigins = [
-      (process.env.FRONTEND_URL || "http://localhost:8080").toLowerCase().trim(),
-      "http://localhost:8080",
-      "http://localhost:3000",
-      "http://localhost:5173",
-      "http://localhost:5174",
-    ];
-
     const normalizedOrigin = origin.toLowerCase().trim().replace(/\/$/, "");
 
     const isAllowed = allowedOrigins.some(o => {
-      const normalizedAllowed = o.replace(/\/$/, "");
-      return normalizedAllowed === normalizedOrigin;
+      return o.toLowerCase() === normalizedOrigin;
     });
 
-    if (
-      isAllowed || 
-      normalizedOrigin.startsWith("http://localhost:") || 
-      normalizedOrigin.startsWith("http://127.0.0.1:")
-    ) {
+    const isLocalDevOrigin = /^http:\/\/(localhost|127\.0\.0\.1):\d+$/i.test(normalizedOrigin);
+
+    if (isAllowed || isLocalDevOrigin) {
       callback(null, true);
     } else {
       console.warn(`CORS blocked for origin: ${origin}`);

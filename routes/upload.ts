@@ -60,11 +60,8 @@ router.post("/", authMiddleware, (req: AuthRequest, res: Response): void => {
 
     fs.writeFileSync(filePath, Buffer.from(base64Data, "base64"));
 
-    const baseUrl =
-      process.env.BACKEND_URL ||
-      `http://localhost:${process.env.PORT || 3000}`;
-
-    res.json({ url: `${baseUrl}/uploads/${uniqueName}` });
+    // Return a relative path — the frontend prepends the API base URL
+    res.json({ url: `/uploads/${uniqueName}` });
   } catch (err: any) {
     console.error("Upload error:", err);
     res.status(500).json({ error: err.message || "Upload failed." });
