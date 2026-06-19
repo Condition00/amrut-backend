@@ -19,6 +19,14 @@ router.get("/", async (req, res): Promise<void> => {
     if (req.query.category) filter.category = req.query.category;
     if (req.query.featured === "true") filter.featured = true;
     if (req.query.isHotOffer === "true") filter.isHotOffer = true;
+    if (req.query.search) {
+      const searchStr = req.query.search as string;
+      filter.$or = [
+        { name: { $regex: searchStr, $options: "i" } },
+        { tagline: { $regex: searchStr, $options: "i" } },
+        { description: { $regex: searchStr, $options: "i" } },
+      ];
+    }
 
     const [products, total] = await Promise.all([
       Product.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit),
