@@ -11,7 +11,7 @@ export interface IProduct extends Document {
   tagline: string;
   description: string;
   image: string;
-  category: "Veg" | "Non-Veg" | "Sun Dries" | "Powders" | "Spices";
+  category: string;
   sizes: ISize[];
   featured: boolean;
   isHotOffer: boolean;
@@ -29,11 +29,7 @@ const ProductSchema = new Schema<IProduct>({
   tagline: { type: String, default: "" },
   description: { type: String, default: "" },
   image: { type: String, default: "" },
-  category: {
-    type: String,
-    enum: ["Veg", "Non-Veg", "Sun Dries", "Powders", "Spices"],
-    required: true,
-  },
+  category: { type: String, required: true },
   sizes: [SizeSchema],
   featured: { type: Boolean, default: false },
   isHotOffer: { type: Boolean, default: false },
