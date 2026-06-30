@@ -359,6 +359,11 @@ export async function seedDatabase() {
       console.log(`Seeded ${seedProductsData.length} default products.`);
     }
 
+    const missingStock = await Product.updateMany({ stock: { $exists: false } }, { $set: { stock: 15 } });
+    if (missingStock.modifiedCount > 0) {
+      console.log(`Backfilled stock for ${missingStock.modifiedCount} products.`);
+    }
+
     // Update any products that still reference the old /src/assets/ paths
     const productsToUpdate = await Product.find({ image: /^\/src\/assets\// });
     if (productsToUpdate.length > 0) {

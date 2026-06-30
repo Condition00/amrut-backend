@@ -1,8 +1,48 @@
 import { Router, type Response } from "express";
 import { Product } from "../models/Product.ts";
+import { Review } from "../models/Review.ts";
 import { authMiddleware, type AuthRequest } from "../middleware/authMiddleware.ts";
 
 const router = Router();
+
+type ReviewSummary = {
+  ratingAverage: number;
+  reviewCount: number;
+};
+
+async function getReviewSummaries(slugs: string[]): Promise<Map<string, ReviewSummary>> {
+  if (!slugs.length) return new Map();
+
+  const aggregated = await Review.aggregate([
+    { $match: { productSlug: { $in: slugs } } },
+    {
+      $group: {
+        _id: "$productSlug",
+        ratingAverage: { $avg: "$rating" },
+        reviewCount: { $sum: 1 },
+      },
+    },
+  ]);
+
+  const summaryMap = new Map<string, ReviewSummary>();
+  for (const row of aggregated) {
+    summaryMap.set(row._id, {
+      ratingAverage: Number((row.ratingAverage || 0).toFixed(1)),
+      reviewCount: row.reviewCount || 0,
+    });
+  }
+
+  return summaryMap;
+}
+
+function withReviewSummary<T extends { slug: string }>(product: T, summaryMap: Map<string, ReviewSummary>) {
+  const summary = summaryMap.get(product.slug);
+  return {
+    ...product,
+    ratingAverage: summary?.ratingAverage ?? 0,
+    reviewCount: summary?.reviewCount ?? 0,
+  };
+}
 
 // ---------------------------------------------------------------------------
 // GET /api/products  — public, paginated
@@ -33,8 +73,10 @@ router.get("/", async (req, res): Promise<void> => {
       Product.countDocuments(filter),
     ]);
 
+    const reviewSummaries = await getReviewSummaries(products.map((product) => product.slug));
+
     res.json({
-      products,
+      products: products.map((product) => withReviewSummary(product.toObject(), reviewSummaries)),
       total,
       page,
       limit,
@@ -42,6 +84,32 @@ router.get("/", async (req, res): Promise<void> => {
     });
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch products." });
+  }
+});
+
+// ---------------------------------------------------------------------------
+// GET /api/products/categories  — public
+// Returns all categories currently used by products so the UI can stay dynamic.
+// ---------------------------------------------------------------------------
+router.get("/categories", async (_req, res): Promise<void> => {
+  try {
+    const categories = await Product.distinct("category");
+    res.json(categories.filter(Boolean).sort((a, b) => a.localeCompare(b)));
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch categories." });
+  }
+});
+
+// ---------------------------------------------------------------------------
+// GET /api/products/categories  — public
+// Returns all categories currently used by products so the UI can stay dynamic.
+// ---------------------------------------------------------------------------
+router.get("/categories", async (_req, res): Promise<void> => {
+  try {
+    const categories = await Product.distinct("category");
+    res.json(categories.filter(Boolean).sort((a, b) => a.localeCompare(b)));
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch categories." });
   }
 });
 
@@ -55,7 +123,10 @@ router.get("/:slug", async (req, res): Promise<void> => {
       res.status(404).json({ error: "Product not found." });
       return;
     }
-    res.json(product);
+
+    const reviewSummaries = await getReviewSummaries([product.slug]);
+
+    res.json(withReviewSummary(product.toObject(), reviewSummaries));
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch product details." });
   }
@@ -66,7 +137,7 @@ router.get("/:slug", async (req, res): Promise<void> => {
 // ---------------------------------------------------------------------------
 router.post("/", authMiddleware, async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const { name, tagline, description, image, category, sizes, featured, isHotOffer } = req.body;
+    const { name, tagline, description, image, category, sizes, stock, featured, isHotOffer } = req.body;
 
     if (!name || !image || !category || !sizes || !sizes.length) {
       res.status(400).json({ error: "Missing required fields." });
@@ -96,6 +167,7 @@ router.post("/", authMiddleware, async (req: AuthRequest, res: Response): Promis
       image,
       category,
       sizes,
+      stock: Number.isFinite(Number(stock)) ? Math.max(0, Number(stock)) : 15,
       featured: !!featured,
       isHotOffer: !!isHotOffer,
     });
@@ -113,7 +185,7 @@ router.post("/", authMiddleware, async (req: AuthRequest, res: Response): Promis
 // ---------------------------------------------------------------------------
 router.put("/:slug", authMiddleware, async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const { name, tagline, description, image, category, sizes, featured, isHotOffer } = req.body;
+    const { name, tagline, description, image, category, sizes, stock, featured, isHotOffer } = req.body;
 
     const product = await Product.findOne({ slug: req.params.slug });
     if (!product) {
@@ -127,6 +199,7 @@ router.put("/:slug", authMiddleware, async (req: AuthRequest, res: Response): Pr
     if (image) product.image = image;
     if (category) product.category = category;
     if (sizes) product.sizes = sizes;
+    if (stock !== undefined) product.stock = Math.max(0, Number(stock) || 0);
     if (featured !== undefined) product.featured = !!featured;
     if (isHotOffer !== undefined) product.isHotOffer = !!isHotOffer;
 

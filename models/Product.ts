@@ -13,6 +13,7 @@ export interface IProduct extends Document {
   image: string;
   category: string;
   sizes: ISize[];
+  stock: number;
   featured: boolean;
   isHotOffer: boolean;
   createdAt: Date;
@@ -31,6 +32,7 @@ const ProductSchema = new Schema<IProduct>({
   image: { type: String, default: "" },
   category: { type: String, required: true },
   sizes: [SizeSchema],
+  stock: { type: Number, default: 15, min: 0 },
   featured: { type: Boolean, default: false },
   isHotOffer: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now },

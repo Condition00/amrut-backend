@@ -2,6 +2,7 @@ import { Router, type Response } from "express";
 import Razorpay from "razorpay";
 import crypto from "crypto";
 import { Order } from "../models/Order.ts";
+import { Product } from "../models/Product.ts";
 import { User } from "../models/User.ts";
 import { authMiddleware, type AuthRequest } from "../middleware/authMiddleware.ts";
 import { adminMiddleware } from "../middleware/adminMiddleware.ts";
@@ -16,6 +17,50 @@ const razorpay = new Razorpay({
   key_id: razorpayKeyId,
   key_secret: razorpayKeySecret,
 });
+
+async function reserveProductStock(items: { productSlug: string; quantity: number }[]) {
+  const quantities = new Map<string, number>();
+  for (const item of items) {
+    quantities.set(item.productSlug, (quantities.get(item.productSlug) || 0) + item.quantity);
+  }
+
+  const products = await Product.find({ slug: { $in: [...quantities.keys()] } });
+  const productMap = new Map(products.map((product) => [product.slug, product]));
+
+  for (const [slug, quantity] of quantities) {
+    const product = productMap.get(slug);
+    if (!product) {
+      throw new Error(`Product not found: ${slug}`);
+    }
+    if (product.stock < quantity) {
+      throw new Error(`Only ${product.stock} piece${product.stock === 1 ? "" : "s"} left for ${product.name}.`);
+    }
+  }
+
+  const saved: Array<{ product: any; stock: number }> = [];
+  try {
+    for (const [slug, quantity] of quantities) {
+      const product = productMap.get(slug);
+      if (!product) continue;
+      saved.push({ product, stock: product.stock });
+      product.stock -= quantity;
+      await product.save();
+    }
+  } catch (error) {
+    for (const entry of saved.reverse()) {
+      entry.product.stock = entry.stock;
+      await entry.product.save();
+    }
+    throw error;
+  }
+
+  return async () => {
+    for (const entry of saved.reverse()) {
+      entry.product.stock = entry.stock;
+      await entry.product.save();
+    }
+  };
+}
 
 // Create Order (to get razorpayOrderId or confirm COD)
 router.post("/", authMiddleware, async (req: AuthRequest, res: Response): Promise<void> => {
@@ -33,6 +78,14 @@ router.post("/", authMiddleware, async (req: AuthRequest, res: Response): Promis
       return;
     }
 
+    let rollbackStock: (() => Promise<void>) | undefined;
+    try {
+      rollbackStock = await reserveProductStock(items);
+    } catch (stockError: any) {
+      res.status(400).json({ error: stockError.message || "One or more items are out of stock." });
+      return;
+    }
+
     if (paymentMethod === "cod") {
       const localOrderId = `cod_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
       const order = new Order({
@@ -47,7 +100,14 @@ router.post("/", authMiddleware, async (req: AuthRequest, res: Response): Promis
         status: "cod-pending",
       });
 
-      await order.save();
+      try {
+        await order.save();
+      } catch (error) {
+        if (rollbackStock) {
+          await rollbackStock();
+        }
+        throw error;
+      }
 
       // Clear user's cart
       user.cart = [];
@@ -73,6 +133,9 @@ router.post("/", authMiddleware, async (req: AuthRequest, res: Response): Promis
     try {
       razorpayOrder = await razorpay.orders.create(options);
     } catch (err: any) {
+      if (rollbackStock) {
+        await rollbackStock();
+      }
       console.error("Razorpay API error:", err);
       res.status(500).json({ error: err.message || "Failed to initiate Razorpay order." });
       return;
@@ -91,7 +154,14 @@ router.post("/", authMiddleware, async (req: AuthRequest, res: Response): Promis
       status: "pending",
     });
 
-    await order.save();
+    try {
+      await order.save();
+    } catch (error: any) {
+      if (rollbackStock) {
+        await rollbackStock();
+      }
+      throw error;
+    }
 
     res.status(201).json({
       keyId: razorpayKeyId,
@@ -151,10 +221,29 @@ router.post("/verify", authMiddleware, async (req: AuthRequest, res: Response): 
   }
 });
 
+// GET /api/orders/my — Fetch the currently logged-in user's orders
+router.get("/my", authMiddleware, async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const user = req.user;
+    if (!user) {
+      res.status(401).json({ error: "Unauthorized." });
+      return;
+    }
+
+    const orders = await Order.find({ userId: user._id }).sort({ createdAt: -1 });
+    res.json(orders);
+  } catch (error) {
+    console.error("Fetch user orders error:", error);
+    res.status(500).json({ error: "Failed to fetch your orders." });
+  }
+});
+
 // GET /api/orders/admin — Fetch all orders (admin only)
 router.get("/admin", authMiddleware, adminMiddleware, async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const orders = await Order.find({}).sort({ createdAt: -1 });
+    const orders = await Order.find({})
+      .populate("userId", "name email")
+      .sort({ createdAt: -1 });
     res.json(orders);
   } catch (error) {
     console.error("Fetch orders error:", error);

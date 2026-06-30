@@ -6,6 +6,28 @@ import { verifyPassword } from "../utils/passwordHelper.ts";
 
 const router = Router();
 
+function normalizeAvatarUrl(rawAvatar?: string): string {
+  if (!rawAvatar) return "";
+
+  const avatar = rawAvatar.trim();
+  if (!avatar) return "";
+
+  if (avatar.startsWith("http://") || avatar.startsWith("https://")) {
+    return avatar;
+  }
+
+  if (avatar.startsWith("//")) {
+    return `https:${avatar}`;
+  }
+
+  // Google sometimes provides host/path-like values without protocol.
+  if (avatar.startsWith("lh3.googleusercontent.com") || avatar.startsWith("googleusercontent.com")) {
+    return `https://${avatar}`;
+  }
+
+  return avatar;
+}
+
 // Google Sign-in Verification (Frontend-only: backend just decodes the credential)
 router.post("/google", async (req, res): Promise<void> => {
   try {
@@ -32,7 +54,7 @@ router.post("/google", async (req, res): Promise<void> => {
 
     const email = payload.email.toLowerCase();
     const name = payload.name;
-    const avatar = payload.picture || "";
+    const avatar = normalizeAvatarUrl(payload.picture || "");
     const googleId = payload.sub;
 
     // Determine role by checking email against ADMIN_EMAILS or existing DB role
@@ -61,7 +83,9 @@ router.post("/google", async (req, res): Promise<void> => {
     } else {
       // Sync Google attributes
       user.name = name;
-      if (avatar) user.avatar = avatar;
+      if (avatar) {
+        user.avatar = avatar;
+      }
       // If user became system admin, promote them unless they're already super-admin
       if (isSystemAdmin && user.role !== "super-admin") {
         user.role = "admin";

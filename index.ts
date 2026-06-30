@@ -17,8 +17,10 @@ import productRoutes from "./routes/products.ts";
 import couponRoutes from "./routes/coupons.ts";
 import userRoutes from "./routes/user.ts";
 import orderRoutes from "./routes/orders.ts";
+import reviewRoutes from "./routes/reviews.ts";
 import adminUserRoutes from "./routes/adminUsers.ts";
 import uploadRoutes from "./routes/upload.ts";
+import deliverySettingsRoutes from "./routes/deliverySettings.ts";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -81,8 +83,10 @@ app.use("/api/products", productRoutes);
 app.use("/api/coupons", couponRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/orders", orderRoutes);
+app.use("/api/reviews", reviewRoutes);
 app.use("/api/admin/users", adminUserRoutes);
 app.use("/api/upload", uploadRoutes);
+app.use("/api/delivery-settings", deliverySettingsRoutes);
 
 // Health Check
 app.get("/health", (req, res) => {
